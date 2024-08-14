@@ -1,12 +1,17 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const instituicaoSchema = new mongoose.Schema({
-    name: String,
-    descricao: String,
-    website: String,
-    cursos: [String]
+const cursoSchema = new mongoose.Schema({
+    nome: String,
+    descricao: String
 });
 
-const Instituicao = mongoose.model('Instituicao', instituicaoSchema);
+const instituicaoSchema = new mongoose.Schema({
+    nome: String, 
+    descricao: String,
+    website: String,
+    cursos: [cursoSchema] 
+});
 
-module.exports = Instituicao;
+const Instituicao = mongoose.model('Instituicaos', instituicaoSchema);
+
+export default Instituicao;

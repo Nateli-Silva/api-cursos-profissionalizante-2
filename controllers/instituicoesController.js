@@ -1,22 +1,28 @@
-const Instituicao = require('../models/instituicoesModel');
+import mongoose from 'mongoose';
+import Instituicao from '../models/instituicoesModel.js';
+import Curso from '../models/cursoModel.js'; 
 
-const getSugestoesInstituicoes = async (req, res) => {
+
+export const getSugestoesInstituicoes = async (req, res) => {
     try {
-        const instituicoes = await Instituicao.find({}, 'name');
-        const nomesInstituicoes = instituicoes.map(inst => inst.name);
-        res.json(nomesInstituicoes);
+        const instituicoes = await Instituicao.find({});
+        res.json(instituicoes);
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar instituições' });
     }
 };
 
-const getInstituicoesCursosById = async (req, res) => {
+
+export const getInstituicoesCursosById = async (req, res) => {
     try {
         const instituicaoId = req.params.id;
-        const dadosInstituicao = await Instituicao.findById(instituicaoId);
-
-        if (dadosInstituicao) {
-            res.json(dadosInstituicao.cursos);
+        if (!mongoose.Types.ObjectId.isValid(instituicaoId)) {
+            return res.status(400).json({ error: 'ID inválido' });
+        }
+         const dadosInstituicao = await Instituicao.findById(instituicaoId);
+         if (dadosInstituicao) {
+             const cursos = dadosInstituicao.cursos;
+            res.json(cursos);
         } else {
             res.status(404).json({ error: 'Instituição não encontrada' });
         }
@@ -25,27 +31,12 @@ const getInstituicoesCursosById = async (req, res) => {
     }
 };
 
-const getSugestoesCursosOnline = async (req, res) => {
-    // Mantenha os dados estáticos ou crie um modelo similar para cursos online
-    const cursosOnline = [
-        {
-            plataforma: 'Fundação Bradesco',
-            cursos: ['Administrando Banco de Dados', 'Desenvolvimento Orientado a Objetos Utilizando a Linguagem Python', 'Excel na Prática', 'Design Thinking para Educadores']
-        },
-        {
-            plataforma: 'Udacity',
-            cursos: ['Curso de Inteligência Artificial', 'Curso de Análise de Dados', 'Curso de Desenvolvimento de Apps']
-        },
-        {
-            plataforma: 'SEBRAE',
-            cursos: ['Aprender a empreender', 'Como planejar o seu negócio', 'Marketing digital para o empreendedor']
-        }
-    ];
-    res.json(cursosOnline);
-};
 
-module.exports = {
-    getSugestoesInstituicoes,
-    getInstituicoesCursosById,
-    getSugestoesCursosOnline
+export const getSugestoesCursosOnline = async (req, res) => {
+    try {
+        const cursosOnline = await Curso.find({}); 
+        res.json(cursosOnline);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar cursos online' });
+    }
 };

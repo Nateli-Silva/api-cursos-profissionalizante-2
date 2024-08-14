@@ -1,22 +1,13 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+import mongoose from 'mongoose';
 
-// Corrija o caminho para o arquivo de conexão
-const connectDB = require('./config/database.js');
-const instituicoesRoutes = require('./routes/instituicoesRoutes.js');
+const connectDB = async () => {
+    try {
+        await mongoose.connect('mongodb://localhost:27017/API_final');
+        console.log('Conectado ao MongoDB Local');
+    } catch (error) {
+        console.error('Erro ao conectar ao MongoDB Local:', error.message);
+        process.exit(1);
+    }
+};
 
-// Conectar ao banco de dados
-connectDB();
-
-// Middleware
-app.use(express.json());
-
-// Rotas
-app.use('/api', instituicoesRoutes);
-
-// Inicie o servidor
-app.listen(port, () => {
-    console.log(`API rodando em http://localhost:${port}`);
-});
-
+export default connectDB;
